@@ -2,7 +2,7 @@ from django import forms
 from .models import Post
 
 class PostModelForm(forms.ModelForm):
-    content = forms.CharField(label="content")
+    content = forms.CharField(label="content", widget=forms.Textarea())
     
     class Meta:
         model = Post
