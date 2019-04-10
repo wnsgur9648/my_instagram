@@ -30,4 +30,18 @@ def delete(request, post_id):
     post = Post.objects.get(pk=post_id)
     post.delete()
     return redirect('posts:list')
+
+def update(request, post_id):
+    if request.method == "POST":
+        post = Post.objects.get(pk=post_id)
+        form = PostModelForm(request.POST, instance = post)
+        if form.is_valid():
+            form.save()
+            return redirect('posts:list')
+    else:
+        form = PostModelForm(instance=Post.objects.get(pk=post_id))
+        context = {
+            'form': form
+        }
+        return render(request, 'posts/update.html', context)
     
