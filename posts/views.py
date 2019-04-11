@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import PostModelForm
 from .models import Post
 
@@ -29,12 +29,18 @@ def list(request):
     return render(request, 'posts/list.html', context)
     
 def delete(request, post_id):
-    post = Post.objects.get(pk=post_id)
+    post = get_object_or_404(Post, pk=post_id)
+    if post.user != request.user:
+        return redirect('posts:list')
     post.delete()
     return redirect('posts:list')
 
 def update(request, post_id):
-    post = Post.objects.get(pk=post_id)
+    post = get_object_or_404(Post, pk=post_id)
+    
+    if post.user != request.user:
+        return redirect('posts:list')
+    
     if request.method == "POST":
         form = PostModelForm(request.POST, instance = post)
         if form.is_valid():

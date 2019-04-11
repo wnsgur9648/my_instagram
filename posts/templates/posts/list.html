@@ -12,8 +12,10 @@
         <div class="card-body">
           <h5 class="card-title">Card title</h5>
           <p class="card-text">{{post.content}}</p>
-          <a class="btn btn-danger" href="{% url 'posts:delete' post.id%}">삭제</a>
-          <a class="btn btn-danger" href="{% url 'posts:update' post.id%}">수정</a>
+          {% if request.user == post.user %}
+            <a class="btn btn-danger" href="{% url 'posts:delete' post.id%}">삭제</a>
+            <a class="btn btn-danger" href="{% url 'posts:update' post.id%}">수정</a>
+          {% endif %}
         </div>
       </div>
       {%endfor%}
