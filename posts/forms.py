@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post
+from .models import Post, Comment
 
 class PostModelForm(forms.ModelForm):
     content = forms.CharField(label="content", widget=forms.Textarea())
@@ -16,3 +16,8 @@ class PostModelForm(forms.ModelForm):
                 'placeholder': "지금 뭘하고 계신가요?",
             })
         }
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
