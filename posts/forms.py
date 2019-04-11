@@ -7,7 +7,7 @@ class PostModelForm(forms.ModelForm):
     class Meta:
         model = Post
         # input을 만들 column 값들을 만들어 넣어준다.
-        fields = ['content',]
+        fields = ['content', 'image',]
         widget = {
             'content': forms.Textarea(attrs={
                 'class': '',
