@@ -3,11 +3,13 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import get_user_model
+from .forms import CustomUserCreationForm
+from django.contrib.auth.decorators import login_required
 
 def signup(request):
     # 회원가입
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             auth_login(request, user)
@@ -41,3 +43,16 @@ def delete(request):
         request.user.delete()
         return redirect('posts:list')
     return render(request, 'accounts/delete.html')
+
+@login_required
+def follow(request, user_id):
+    person = get_object_or_404(get_user_model(), pk=user_id)
+    # 만약 이미 팔로우한 사람이라면
+    if request.user in person.followers.all():
+        person.followers.remove(request.user)
+    # -> 언팔
+    # 아니면,
+    else:
+        person.followers.add(request.user)
+    # -> 팔로우
+    return redirect('profile', person.username)

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import PostModelForm, CommentForm
 from .models import Post, Comment
+from django.contrib.auth.decorators import login_required
 
 def create(request):
     # 만약, POST 요청이 오면
@@ -22,14 +23,15 @@ def create(request):
         return render(request, 'posts/create.html', context)
 def list(request):
     # 모든 Post를 보여줌
-    posts = Post.objects.all()
+    posts = Post.objects.filter(user__in=request.user.followings.values('id')).order_by('-pk')
     comment_form = CommentForm()
     context = {
         'posts': posts,
         'comment_form': comment_form
     }
     return render(request, 'posts/list.html', context)
-    
+
+@login_required    
 def delete(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if post.user != request.user:
@@ -37,6 +39,7 @@ def delete(request, post_id):
     post.delete()
     return redirect('posts:list')
 
+@login_required
 def update(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     
@@ -54,7 +57,8 @@ def update(request, post_id):
             'form': form
         }
         return render(request, 'posts/update.html', context)
-    
+
+@login_required
 def create_comments(request, post_id):
     comment_form = CommentForm(request.POST)
     if comment_form.is_valid():
